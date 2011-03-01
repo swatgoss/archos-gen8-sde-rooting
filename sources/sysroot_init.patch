@@ -1,0 +1,36 @@
+--- init.orig	2011-03-01 02:04:40.581942981 +0100
++++ init	2011-03-01 02:00:16.837942981 +0100
+@@ -53,6 +53,7 @@
+ TOUCH=/bin/touch
+ UMOUNT=/bin/umount
+ ZCAT=/bin/zcat
++CP=/bin/cp
+ 
+ SQUASHFS_FILENAME="androidmerged.squashfs"
+ SECURE_SQUASHFS_FILENAME="$SQUASHFS_FILENAME.secure"
+@@ -121,6 +122,25 @@
+ 
+ rootfs_path=`get_mount_info p rootfs`
+ 
++###########################################################
++# union rootfs and system
++$INSMOD /lib/modules/unionfs.ko
++SYSTEM_PATH=`get_mount_info p system`
++OVERLAY_PATH=$SYSTEM_PATH/unionfs
++if [ -e $OVERLAY_PATH/RESET ]; then
++	$RM -rf $OVERLAY_PATH
++fi
++$MKDIR $OVERLAY_PATH
++$MOUNT -t unionfs -o dirs=$OVERLAY_PATH=rw:$rootfs_path=ro unionfs $rootfs_path
++# copy superuser
++SUBIN=su
++SUBIN_PATH=$rootfs_path/system/bin/$SUBIN
++SUAPP=Superuser.apk
++SUAPP_PATH=$rootfs_path/system/app/$SUAPP
++[ -e $SUBIN_PATH ] || $CP -p /home/$SUBIN $SUBIN_PATH
++[ -e $SUAPP_PATH ] || $CP -p /home/$SUAPP $SUAPP_PATH
++###########################################################
++
+ $USB_TS_ENABLE --detach
+ 
+ $UMOUNT /proc/bus/usb

@@ -1,0 +1,24 @@
+--- init.orig	2011-03-01 02:04:40.581942981 +0100
++++ init	2011-03-01 02:06:24.518942980 +0100
+@@ -53,6 +53,7 @@
+ TOUCH=/bin/touch
+ UMOUNT=/bin/umount
+ ZCAT=/bin/zcat
++CP=/bin/cp
+ 
+ SQUASHFS_FILENAME="androidmerged.squashfs"
+ SECURE_SQUASHFS_FILENAME="$SQUASHFS_FILENAME.secure"
+@@ -121,6 +122,13 @@
+ 
+ rootfs_path=`get_mount_info p rootfs`
+ 
++# Create tempfs on /rootfs/home and unionfs with /rootfs/system
++$MOUNT -t tmpfs tmpfs $rootfs_path/home
++$INSMOD /lib/modules/unionfs.ko
++$MOUNT -t unionfs -o dirs=$rootfs_path/home=rw:$rootfs_path/system=ro unionfs $rootfs_path/system
++$CP -p /home/su $rootfs_path/system/bin/
++$CP -p /home/Superuser.apk $rootfs_path/system/app/
++
+ $USB_TS_ENABLE --detach
+ 
+ $UMOUNT /proc/bus/usb
