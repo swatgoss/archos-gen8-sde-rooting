@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
-    
     <string name="app_name">AppDataResizer</string>
+	<string name="err_extract">failed to extract parted binary</string>
+	<string name="err_parted">failed to run parted</string>
+	<string name="err_chmod">failed to chmod parted</string>
 </resources>
