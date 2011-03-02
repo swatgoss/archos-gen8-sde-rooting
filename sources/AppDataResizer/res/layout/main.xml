@@ -4,4 +4,10 @@
 	android:layout_height="fill_parent">
 	<Button android:text="Test Parted" android:layout_width="match_parent"
 		android:layout_height="wrap_content" android:id="@+id/btnTest"></Button>
+	<Button android:text="Check" android:layout_width="match_parent"
+		android:layout_height="wrap_content" android:id="@+id/btnCheck"></Button>
+	<Button android:text="Mount" android:layout_width="match_parent"
+		android:layout_height="wrap_content" android:id="@+id/btnMount"></Button>
+	<Button android:text="Unmount" android:layout_width="match_parent"
+		android:layout_height="wrap_content" android:id="@+id/btnUnmount"></Button>
 </LinearLayout>
