@@ -4,4 +4,11 @@
 	<string name="err_extract">failed to extract parted binary</string>
 	<string name="err_parted">failed to run parted</string>
 	<string name="err_chmod">failed to chmod parted</string>
+<string name="report">Report</string>
+<string name="ok">Ok</string>
+<string name="progress_checkMounted">check mounted</string>
+    <string name="progress_setupPartedBinary">setup parted binary</string>
+    <string name="progress_verifyPartedPrint">verify parted print</string>
+    <string name="progress_checkUsbMassStorage">check usb mass storage</string>
+    <string name="progress_checkPartition">check partition</string>
 </resources>

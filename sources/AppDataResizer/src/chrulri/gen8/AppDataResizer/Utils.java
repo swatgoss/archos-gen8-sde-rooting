@@ -14,9 +14,16 @@ import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import android.app.Activity;
+import android.app.Dialog;
+import android.content.Context;
 import android.os.IBinder;
 import android.util.AndroidRuntimeException;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
 final class Utils {
 	static final String TAG = Utils.class.getName();
@@ -160,7 +167,7 @@ final class Utils {
 		}
 	}
 
-	public static class MountService {
+	public static class MountUtils {
 
 		public static Object getService() {
 			Object service = invoke(METHOD_ServiceManager_getService, null,
@@ -197,6 +204,92 @@ final class Utils {
 		public static boolean isUsbMassStorageEnabled(Object mountService) {
 			return (Boolean) invoke(METHOD_IMountService_isUsbMassStorageEnabled,
 					mountService);
+		}
+	}
+
+	public static class LogUtils {
+
+		private static class ErrorDialog extends Dialog {
+
+			public ErrorDialog(Context context, CharSequence msg, Throwable t) {
+				super(context);
+				// layout
+				setContentView(R.layout.error);
+				Button okButton = (Button) findViewById(R.id.error_okButton);
+				Button reportButton = (Button) findViewById(R.id.error_reportButton);
+				TextView textView = (TextView) findViewById(R.id.error_textView);
+				// fill textView
+				StringBuilder buf = new StringBuilder();
+				buf.append(msg);
+				buf.append(NEWLINE);
+				if (t != null) {
+					buf.append(getStackTrace(t));
+				}
+				textView.setText(buf.toString());
+				// handle button clicks
+				okButton.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						ErrorDialog.this.dismiss();
+					}
+				});
+				reportButton.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						// TODO report something to somewhere ;)
+						ErrorDialog.this.dismiss();
+					}
+				});
+			}
+		}
+
+		public static void showError(final Activity activity, final int resId) {
+			if (activity == null)
+				return; // nop
+			showError(activity, activity.getText(resId));
+		}
+
+		public static void showError(final Activity activity, final CharSequence msg) {
+			if (activity == null)
+				return; // nop
+			showError(activity, msg, null);
+		}
+
+		public static void showError(final Activity activity, final int resId,
+				final Throwable t) {
+			if (activity == null)
+				return; // nop
+			showError(activity, activity.getText(resId), t);
+		}
+
+		public static void showError(final Activity activity,
+				final CharSequence msg, final Throwable t) {
+			if (activity == null)
+				return; // nop
+			activity.runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					ErrorDialog dlg = new ErrorDialog(activity, msg, t);
+					dlg.show();
+				}
+			});
+		}
+
+		public static void toast(final Activity activity, final CharSequence msg) {
+			if (activity == null)
+				return; // nop
+			activity.runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
+				}
+			});
+		}
+
+		public static void toast(final Activity activity, final int resId) {
+			if (activity == null)
+				return; // nop
+			toast(activity, activity.getText(resId));
 		}
 	}
 }
